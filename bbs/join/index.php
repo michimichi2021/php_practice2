@@ -1,4 +1,5 @@
 <?php
+session_start();
 $form = [
     'name' => '',
     'email' => '',
@@ -30,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // 画像のチェック
     $image = $_FILES['image'];
-    if ($image['name'] !== '' && $image['error'] === 0) {
+    if ($image['name'] != '' && $image['error'] == 0) {
         $type = mime_content_type($image['tmp_name']);
         if ($type !== 'image/png' && $type !== 'image/jpeg') {
             $error['image'] = 'type';
@@ -38,6 +39,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($error)) {
+        $_SESSION['form'] = $form;
+
+        // 画像のアップロード
+        $filename = date('YmdHis') . '_' . $image['name'];
+        move_uploaded_file($image)
+        exit();
+
         header('Location: check.php');
         exit();
     }
